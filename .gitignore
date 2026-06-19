@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# Data
+data/raw/
+data/processed/
+
+# Models and artifacts
+models/
+*.pkl
+*.joblib
+mlruns/
+
+# System files
+.DS_Store

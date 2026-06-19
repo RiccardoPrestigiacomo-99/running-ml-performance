@@ -1,0 +1,9 @@
+[project]
+name = "running-ml-performance"
+version = "0.1.0"
+description = "End-to-end ML project to predict running performance from activity data"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
