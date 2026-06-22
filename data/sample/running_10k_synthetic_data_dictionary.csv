@@ -1,0 +1,25 @@
+column_name,description,type,available_in
+activity_id,Unique synthetic activity identifier,string,activity dataset
+athlete_id,Unique synthetic athlete identifier,string,both
+activity_date,Date of the training activity,date,activity dataset
+week_number,Training week number from 1 to 13,integer,activity dataset
+days_before_race,Days between activity date and race date,integer,activity dataset
+activity_type,"Type of run: easy, recovery, long, tempo, interval, hill",category,activity dataset
+distance_km,Distance covered in the activity,float,activity dataset
+duration_min,Activity duration in minutes,float,activity dataset
+pace_min_per_km,Activity average pace in minutes per kilometer,float,activity dataset
+avg_heart_rate,Synthetic average heart rate during activity,integer,activity dataset
+max_heart_rate,Synthetic maximum heart rate during activity,integer,activity dataset
+elevation_gain_m,Synthetic elevation gain in meters,float,activity dataset
+calories,Synthetic calories estimate,integer,activity dataset
+weekly_km,Total distance run by the athlete in the activity week,float,activity dataset
+weekly_duration_min,Total duration run by the athlete in the activity week,float,activity dataset
+weekly_run_count,Number of runs by the athlete in the activity week,integer,activity dataset
+rolling_4w_km,Total distance in the current and previous three weeks,float,activity dataset
+avg_weekly_km_last_4w,Average weekly distance over the current and previous three weeks,float,both
+active_weeks_last_4w,Number of active weeks in the current and previous three weeks,integer,both
+athlete_profile,"Synthetic level: beginner, recreational, intermediate, advanced, elite",category,both
+training_scenario,"Training pattern: consistent, progressive_build, inconsistent, minor_injury, late_taper",category,both
+race_10k_finish_time_min,Target variable: synthetic 10k finish time in minutes,float,both
+race_10k_finish_time_seconds,Target variable in seconds,integer,both
+race_10k_finish_time_hhmmss,Target variable formatted as hh:mm:ss,string,both

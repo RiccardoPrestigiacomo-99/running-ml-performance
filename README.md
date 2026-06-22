@@ -1,34 +1,40 @@
 # Running ML Performance
 
-End-to-end machine learning project to predict next-week running performance from historical running activity data.
+End-to-end machine learning project to predict 10 km race finish time from training activity data.
 
-## Goal
+## Project objective
 
-The goal is to build a production-style ML pipeline using public running activity data first, then later adapt the same pipeline to personal running data.
+The objective of this project is to predict a runner's 10 km race finish time using the previous 3 months of training data.
 
-## Main prediction target
+The model will use features such as:
 
-Predict next-week running performance, starting with:
+- weekly running volume
+- monthly running volume
+- average training pace
+- training duration
+- heart rate
+- elevation gain
+- training consistency
 
-- next-week average pace
+## Dataset
 
-## Common activity schema
+The first version of the project uses a realistic synthetic dataset containing:
 
-All data sources will be transformed into the same schema:
+- 100 athletes
+- 13 weeks of training
+- one row per activity
+- athlete profiles from beginner to elite
+- realistic training scenarios
+- simulated 10 km race finish times
 
-- activity_id
-- athlete_id
-- activity_date
-- activity_type
-- distance_km
-- duration_min
-- pace_min_per_km
-- avg_heart_rate
-- max_heart_rate
-- elevation_gain_m
-- calories
-- source
+The dataset is synthetic because no suitable public dataset was found with all the required fields: training history, heart rate, elevation, and 10 km race outcome.
 
-## Project status
+The goal of the synthetic data is to build and demonstrate the full end-to-end machine learning pipeline. Future versions can replace the synthetic data with personal running data.
 
-Week 1: project setup and public dataset exploration.
+## Target variable
+
+The main target is:
+
+`race_10k_finish_time_min`
+
+This represents the athlete's 10 km race finish time in minutes.
