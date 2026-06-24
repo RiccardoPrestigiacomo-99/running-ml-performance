@@ -13,22 +13,42 @@ ATHLETE_SUMMARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_athlete_summary.
 DATA_DICTIONARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_data_dictionary.csv"
 
 
+def check_file_exists(file_path: Path) -> None:
+    """Raise an error if the expected data file does not exist."""
+    if not file_path.exists():
+        raise FileNotFoundError(f"Expected file not found: {file_path}")
+
+
+def load_csv(file_path: Path) -> pd.DataFrame:
+    """Load a CSV file after checking that it exists."""
+    check_file_exists(file_path)
+    return pd.read_csv(file_path)
+
+
 def load_activities() -> pd.DataFrame:
     """Load the synthetic activity-level running dataset."""
-    activities = pd.read_csv(ACTIVITIES_FILE)
-    return activities
+    return load_csv(ACTIVITIES_FILE)
 
 
 def load_athlete_summary() -> pd.DataFrame:
     """Load the synthetic athlete-level summary dataset."""
-    athlete_summary = pd.read_csv(ATHLETE_SUMMARY_FILE)
-    return athlete_summary
+    return load_csv(ATHLETE_SUMMARY_FILE)
 
 
 def load_data_dictionary() -> pd.DataFrame:
     """Load the synthetic dataset data dictionary."""
-    data_dictionary = pd.read_csv(DATA_DICTIONARY_FILE)
-    return data_dictionary
+    return load_csv(DATA_DICTIONARY_FILE)
+
+
+def print_dataset_summary(name: str, dataframe: pd.DataFrame) -> None:
+    """Print basic information about a dataframe."""
+    print(f"\n{name}")
+    print("-" * len(name))
+    print(f"Rows: {dataframe.shape[0]}")
+    print(f"Columns: {dataframe.shape[1]}")
+    print("Column names:")
+    for column in dataframe.columns:
+        print(f"  - {column}")
 
 
 def main() -> None:
@@ -37,9 +57,9 @@ def main() -> None:
     athlete_summary = load_athlete_summary()
     data_dictionary = load_data_dictionary()
 
-    print("Activities shape:", activities.shape)
-    print("Athlete summary shape:", athlete_summary.shape)
-    print("Data dictionary shape:", data_dictionary.shape)
+    print_dataset_summary("Activities dataset", activities)
+    print_dataset_summary("Athlete summary dataset", athlete_summary)
+    print_dataset_summary("Data dictionary", data_dictionary)
 
 
 if __name__ == "__main__":
