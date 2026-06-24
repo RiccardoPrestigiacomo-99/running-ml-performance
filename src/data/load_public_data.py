@@ -12,6 +12,8 @@ ACTIVITIES_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_activities.csv"
 ATHLETE_SUMMARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_athlete_summary.csv"
 DATA_DICTIONARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_data_dictionary.csv"
 
+PROCESSED_ATHLETE_SUMMARY_FILE = DATA_PROCESSED_DIR / "athlete_summary_processed.csv"
+
 
 REQUIRED_ACTIVITY_COLUMNS = [
     "activity_id",
@@ -31,6 +33,23 @@ REQUIRED_ACTIVITY_COLUMNS = [
 
 
 REQUIRED_ATHLETE_SUMMARY_COLUMNS = [
+    "athlete_id",
+    "athlete_profile",
+    "training_scenario",
+    "total_3month_km",
+    "avg_training_pace_min_per_km",
+    "avg_heart_rate",
+    "total_elevation_gain_m",
+    "longest_run_km",
+    "last_4w_km",
+    "avg_weekly_km_last_4w",
+    "active_weeks_last_4w",
+    "avg_weekly_runs_last_4w",
+    "race_10k_finish_time_min",
+]
+
+
+MODELING_COLUMNS = [
     "athlete_id",
     "athlete_profile",
     "training_scenario",
@@ -108,6 +127,25 @@ def load_data_dictionary() -> pd.DataFrame:
     return load_csv(DATA_DICTIONARY_FILE)
 
 
+def build_processed_athlete_summary(athlete_summary: pd.DataFrame) -> pd.DataFrame:
+    """Select the columns needed for the first modeling dataset."""
+    validate_required_columns(
+        dataframe=athlete_summary,
+        required_columns=MODELING_COLUMNS,
+        dataset_name="Athlete summary modeling dataset",
+    )
+
+    processed = athlete_summary[MODELING_COLUMNS].copy()
+
+    return processed
+
+
+def save_dataframe(dataframe: pd.DataFrame, output_path: Path) -> None:
+    """Save a dataframe to CSV, creating the parent folder if needed."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    dataframe.to_csv(output_path, index=False)
+
+
 def print_dataset_summary(name: str, dataframe: pd.DataFrame) -> None:
     """Print basic information about a dataframe."""
     print(f"\n{name}")
@@ -120,16 +158,26 @@ def print_dataset_summary(name: str, dataframe: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    """Load all public/sample datasets, validate them, and print summaries."""
+    """Load sample data, validate it, and save the processed modeling dataset."""
     activities = load_activities(validate=True)
     athlete_summary = load_athlete_summary(validate=True)
     data_dictionary = load_data_dictionary()
+
+    processed_athlete_summary = build_processed_athlete_summary(athlete_summary)
+
+    save_dataframe(
+        dataframe=processed_athlete_summary,
+        output_path=PROCESSED_ATHLETE_SUMMARY_FILE,
+    )
 
     print("All required column checks passed.")
 
     print_dataset_summary("Activities dataset", activities)
     print_dataset_summary("Athlete summary dataset", athlete_summary)
     print_dataset_summary("Data dictionary", data_dictionary)
+    print_dataset_summary("Processed athlete summary dataset", processed_athlete_summary)
+
+    print(f"\nProcessed athlete summary saved to: {PROCESSED_ATHLETE_SUMMARY_FILE}")
 
 
 if __name__ == "__main__":
