@@ -35,6 +35,47 @@ The dataset is synthetic because no suitable public dataset was found with all t
 
 The goal of the synthetic data is to build and demonstrate the full end-to-end machine learning pipeline. Future versions can replace the synthetic data with personal running data.
 
+## Data loading pipeline
+
+The first reusable data pipeline has been created in:
+
+`src/data/load_public_data.py`
+
+This script performs the following steps:
+
+1. Loads the synthetic activity-level dataset.
+2. Loads the athlete-level summary dataset.
+3. Loads the data dictionary.
+4. Checks that the expected files exist.
+5. Validates that required columns are present.
+6. Selects the first modeling columns from the athlete summary dataset.
+7. Saves a processed modeling dataset to:
+
+`data/processed/athlete_summary_processed.csv`
+
+The processed athlete summary dataset is the first modeling-ready table. It contains one row per athlete and the target variable:
+
+`race_10k_finish_time_min`
+
+The processed file is generated locally and is not committed to GitHub because `data/processed/` is ignored. This keeps the repository clean while ensuring that the dataset can be regenerated from source files.
+
+## How to run the data loading step
+
+From the project root, run:
+
+`python src/data/load_public_data.py`
+
+This command loads the sample data, validates the expected columns, and creates the first processed dataset.
+
+Expected output:
+
+`All required column checks passed.`
+
+The script saves the processed athlete summary dataset to:
+
+`data/processed/athlete_summary_processed.csv`
+
+
 ## Current status
 
 Week 1 completed:
@@ -45,3 +86,11 @@ Week 1 completed:
 - Synthetic 10 km dataset added
 - Initial data exploration completed
 - First feature and target candidates identified
+
+Week 2 completed:
+
+- First reusable data loading script created
+- File existence checks added
+- Required column validation added
+- Modeling columns selected
+- Processed athlete summary dataset generated
