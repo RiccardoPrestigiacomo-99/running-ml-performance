@@ -14,7 +14,6 @@ DATA_DICTIONARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_data_dictionary.
 
 PROCESSED_ATHLETE_SUMMARY_FILE = DATA_PROCESSED_DIR / "athlete_summary_processed.csv"
 
-
 REQUIRED_ACTIVITY_COLUMNS = [
     "activity_id",
     "athlete_id",
