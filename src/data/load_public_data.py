@@ -13,6 +13,40 @@ ATHLETE_SUMMARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_athlete_summary.
 DATA_DICTIONARY_FILE = DATA_SAMPLE_DIR / "running_10k_synthetic_data_dictionary.csv"
 
 
+REQUIRED_ACTIVITY_COLUMNS = [
+    "activity_id",
+    "athlete_id",
+    "activity_date",
+    "week_number",
+    "activity_type",
+    "distance_km",
+    "duration_min",
+    "pace_min_per_km",
+    "avg_heart_rate",
+    "max_heart_rate",
+    "elevation_gain_m",
+    "calories",
+    "race_10k_finish_time_min",
+]
+
+
+REQUIRED_ATHLETE_SUMMARY_COLUMNS = [
+    "athlete_id",
+    "athlete_profile",
+    "training_scenario",
+    "total_3month_km",
+    "avg_training_pace_min_per_km",
+    "avg_heart_rate",
+    "total_elevation_gain_m",
+    "longest_run_km",
+    "last_4w_km",
+    "avg_weekly_km_last_4w",
+    "active_weeks_last_4w",
+    "avg_weekly_runs_last_4w",
+    "race_10k_finish_time_min",
+]
+
+
 def check_file_exists(file_path: Path) -> None:
     """Raise an error if the expected data file does not exist."""
     if not file_path.exists():
@@ -25,14 +59,48 @@ def load_csv(file_path: Path) -> pd.DataFrame:
     return pd.read_csv(file_path)
 
 
-def load_activities() -> pd.DataFrame:
+def validate_required_columns(
+    dataframe: pd.DataFrame,
+    required_columns: list[str],
+    dataset_name: str,
+) -> None:
+    """Check that a dataframe contains all required columns."""
+    missing_columns = [
+        column for column in required_columns if column not in dataframe.columns
+    ]
+
+    if missing_columns:
+        raise ValueError(
+            f"{dataset_name} is missing required columns: {missing_columns}"
+        )
+
+
+def load_activities(validate: bool = True) -> pd.DataFrame:
     """Load the synthetic activity-level running dataset."""
-    return load_csv(ACTIVITIES_FILE)
+    activities = load_csv(ACTIVITIES_FILE)
+
+    if validate:
+        validate_required_columns(
+            dataframe=activities,
+            required_columns=REQUIRED_ACTIVITY_COLUMNS,
+            dataset_name="Activities dataset",
+        )
+
+    return activities
 
 
-def load_athlete_summary() -> pd.DataFrame:
+def load_athlete_summary(validate: bool = True) -> pd.DataFrame:
     """Load the synthetic athlete-level summary dataset."""
-    return load_csv(ATHLETE_SUMMARY_FILE)
+    athlete_summary = load_csv(ATHLETE_SUMMARY_FILE)
+
+    if validate:
+        validate_required_columns(
+            dataframe=athlete_summary,
+            required_columns=REQUIRED_ATHLETE_SUMMARY_COLUMNS,
+            dataset_name="Athlete summary dataset",
+        )
+
+    return athlete_summary
 
 
 def load_data_dictionary() -> pd.DataFrame:
@@ -52,10 +120,12 @@ def print_dataset_summary(name: str, dataframe: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    """Load all public/sample datasets and print basic information."""
-    activities = load_activities()
-    athlete_summary = load_athlete_summary()
+    """Load all public/sample datasets, validate them, and print summaries."""
+    activities = load_activities(validate=True)
+    athlete_summary = load_athlete_summary(validate=True)
     data_dictionary = load_data_dictionary()
+
+    print("All required column checks passed.")
 
     print_dataset_summary("Activities dataset", activities)
     print_dataset_summary("Athlete summary dataset", athlete_summary)
