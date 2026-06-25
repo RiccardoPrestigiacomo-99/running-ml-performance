@@ -128,7 +128,7 @@ def clean_activities(activities: pd.DataFrame) -> pd.DataFrame:
 
 
 def clean_athlete_summary(athlete_summary: pd.DataFrame) -> pd.DataFrame:
-    """Apply basic cleaning rules to the athlete-level summary dataset."""
+    """Apply cleaning rules to the athlete-level summary dataset."""
     athlete_summary = athlete_summary.copy()
 
     athlete_summary = convert_numeric_columns(
@@ -136,9 +136,82 @@ def clean_athlete_summary(athlete_summary: pd.DataFrame) -> pd.DataFrame:
         numeric_columns=ATHLETE_SUMMARY_NUMERIC_COLUMNS,
     )
 
+    # Remove duplicated athlete rows if any.
+    initial_rows = len(athlete_summary)
+
+    athlete_summary = athlete_summary.drop_duplicates(
+        subset=["athlete_id"]
+    ).reset_index(drop=True)
+
+    duplicated_rows_removed = initial_rows - len(athlete_summary)
+
+    if duplicated_rows_removed > 0:
+        print(f"Removed {duplicated_rows_removed} duplicated athlete rows.")
+
+    # Drop rows without the target variable.
+    initial_rows = len(athlete_summary)
+
     athlete_summary = athlete_summary.dropna(
         subset=["race_10k_finish_time_min"]
     ).reset_index(drop=True)
+
+    missing_target_rows_removed = initial_rows - len(athlete_summary)
+
+    if missing_target_rows_removed > 0:
+        print(
+            f"Removed {missing_target_rows_removed} athlete rows "
+            "with missing race target."
+        )
+
+    # Keep only realistic 10 km finish times.
+    initial_rows = len(athlete_summary)
+
+    athlete_summary = athlete_summary[
+        athlete_summary["race_10k_finish_time_min"].between(25, 90)
+    ].reset_index(drop=True)
+
+    unrealistic_target_rows_removed = initial_rows - len(athlete_summary)
+
+    if unrealistic_target_rows_removed > 0:
+        print(
+            f"Removed {unrealistic_target_rows_removed} athlete rows "
+            "with unrealistic 10 km finish times."
+        )
+
+    # Keep only realistic training values.
+    initial_rows = len(athlete_summary)
+
+    athlete_summary = athlete_summary[
+        (athlete_summary["total_3month_km"] > 0)
+        & (athlete_summary["avg_training_pace_min_per_km"].between(3, 9))
+        & (athlete_summary["avg_heart_rate"].between(80, 210))
+        & (athlete_summary["total_elevation_gain_m"] >= 0)
+        & (athlete_summary["longest_run_km"] > 0)
+        & (athlete_summary["last_4w_km"] >= 0)
+        & (athlete_summary["avg_weekly_km_last_4w"] >= 0)
+        & (athlete_summary["active_weeks_last_4w"].between(0, 4))
+        & (athlete_summary["avg_weekly_runs_last_4w"] >= 0)
+    ].reset_index(drop=True)
+
+    invalid_training_rows_removed = initial_rows - len(athlete_summary)
+
+    if invalid_training_rows_removed > 0:
+        print(
+            f"Removed {invalid_training_rows_removed} athlete rows "
+            "with invalid training values."
+        )
+
+    # Clean categorical text columns.
+    categorical_columns = ["athlete_profile", "training_scenario"]
+
+    for column in categorical_columns:
+        athlete_summary[column] = (
+            athlete_summary[column]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            .str.replace(" ", "_", regex=False)
+        )
 
     return athlete_summary
 
